@@ -9,7 +9,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include  "GroomComponent.h"
+#include "GroomComponent.h"
+#include "Items/Item.h"
+#include "Items/Weapons/Weapon.h"
 
 
 ASlashCharacter::ASlashCharacter()
@@ -91,6 +93,12 @@ void ASlashCharacter::Attack()
 
 void ASlashCharacter::EKeyPressed()
 {
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	}
 }
 
 void ASlashCharacter::Dodge()

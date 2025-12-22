@@ -5,14 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
-
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
+class AItem;
 
 UCLASS()
 class UNREALCPP_API ASlashCharacter : public ACharacter
@@ -58,6 +59,8 @@ protected:
 
 	
 private:
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;
 	
@@ -69,5 +72,13 @@ private:
 		
 	UPROPERTY(VisibleAnywhere, Category="Groom")
 	UGroomComponent* EyeBrows;
-		
+
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
+
+
+	
+public:
+	FORCEINLINE void SetOverlappingItem(AItem* Item) {OverlappingItem = Item;}
+	FORCEINLINE ECharacterState GetCharacterState() const {return CharacterState;}
 };
