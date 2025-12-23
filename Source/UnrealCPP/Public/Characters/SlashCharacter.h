@@ -14,6 +14,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class UAnimMontage;
+class AWeapon;
 
 UCLASS()
 class UNREALCPP_API ASlashCharacter : public ACharacter
@@ -50,6 +52,10 @@ protected:
 	UInputAction* DodgeAction;
 
 
+	/**
+	 * 
+	 * Callback for Input
+	 */
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump();
@@ -57,9 +63,24 @@ protected:
 	void EKeyPressed();
 	void Dodge();
 
+	/**
+	 *
+	 *	Play Montage Functions
+	 */
+	void PlayAttackMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+	bool CanAttack();
 	
+	void PlayEquipMontage(FName SectionName);
+	bool CanDisarm();
+	bool CanArm();
 private:
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	
+	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;
@@ -76,7 +97,17 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
 
+	UPROPERTY(VisibleAnywhere, Category=Weapon)
+	AItem* EquippedWeapon;
 
+	/**
+	 *	Animation Montages
+	**/
+	UPROPERTY(EditDefaultsOnly, Category=Montages)
+	UAnimMontage* AttackMontage;
+		
+	UPROPERTY(EditDefaultsOnly, Category=Montages)
+	UAnimMontage* EquipMontage;
 	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) {OverlappingItem = Item;}
