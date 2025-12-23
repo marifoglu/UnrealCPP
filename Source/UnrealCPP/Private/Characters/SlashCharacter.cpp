@@ -2,7 +2,6 @@
 
 
 #include "Characters/SlashCharacter.h"
-
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -61,7 +60,7 @@ void ASlashCharacter::BeginPlay()
 
 void ASlashCharacter::Move(const FInputActionValue& Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	
 	const FVector2d MovementVector = Value.Get<FVector2D>();
 	
@@ -118,6 +117,27 @@ bool ASlashCharacter::CanArm()
 			EquippedWeapon;
 }
 
+void ASlashCharacter::Disarm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
+	}
+}
+
+void ASlashCharacter::Arm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void ASlashCharacter::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
 void ASlashCharacter::EKeyPressed()
 {
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
@@ -127,12 +147,14 @@ void ASlashCharacter::EKeyPressed()
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 		OverlappingWeapon = nullptr;
 		EquippedWeapon = OverlappingWeapon;
-	}else
+	}
+	else
 	{
 		if (CanDisarm())
 		{
 			PlayEquipMontage(FName("Unequip"));
 			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
 			UE_LOG(LogTemp, Warning, TEXT("Unequip"));
 			
 		}
@@ -140,8 +162,8 @@ void ASlashCharacter::EKeyPressed()
 		{
 			PlayEquipMontage(FName("Equip"));
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_EquippingWeapon;
 			UE_LOG(LogTemp, Warning, TEXT("Equip"));
-			
 		}
 	}
 }

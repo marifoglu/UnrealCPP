@@ -76,6 +76,15 @@ protected:
 	void PlayEquipMontage(FName SectionName);
 	bool CanDisarm();
 	bool CanArm();
+
+	UFUNCTION(BlueprintCallable)
+	void Disarm();
+	
+	UFUNCTION(BlueprintCallable)
+	void Arm();
+	
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
 private:
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 	
@@ -98,7 +107,7 @@ private:
 	AItem* OverlappingItem;
 
 	UPROPERTY(VisibleAnywhere, Category=Weapon)
-	AItem* EquippedWeapon;
+	AWeapon* EquippedWeapon;
 
 	/**
 	 *	Animation Montages
