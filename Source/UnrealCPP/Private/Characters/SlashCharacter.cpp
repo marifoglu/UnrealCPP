@@ -119,23 +119,33 @@ bool ASlashCharacter::CanArm()
 
 void ASlashCharacter::Disarm()
 {
+	UE_LOG(LogTemp, Error, TEXT("DISARM FUNCTION EXECUTED"));
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
 	}
+	ActionState = EActionState::EAS_Unoccupied; // ADD THIS
 }
 
 void ASlashCharacter::Arm()
 {
+	UE_LOG(LogTemp, Error, TEXT("ARM FUNCTION EXECUTED"));
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
 	}
+	ActionState = EActionState::EAS_Unoccupied; // ADD THIS
 }
-
 void ASlashCharacter::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+	UE_LOG(LogTemp, Error, TEXT("FINISH EQUIPPING CALLED - CharacterState: %d"), CharacterState);
+	
+	// Call Arm if we're equipping
+	if (CharacterState == ECharacterState::ECS_EquippedOneHandedWeapon && EquippedWeapon)
+	{
+		Arm();
+	}
 }
 
 void ASlashCharacter::EKeyPressed()
@@ -145,28 +155,36 @@ void ASlashCharacter::EKeyPressed()
 	{
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		OverlappingWeapon = nullptr;
 		EquippedWeapon = OverlappingWeapon;
+		OverlappingItem = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("Picked up weapon"));
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterState: %d, ActionState: %d, EquippedWeapon: %s"), 
+			CharacterState, ActionState, EquippedWeapon ? TEXT("EXISTS") : TEXT("NULL"));
+			
 		if (CanDisarm())
 		{
 			PlayEquipMontage(FName("Unequip"));
 			CharacterState = ECharacterState::ECS_Unequipped;
 			ActionState = EActionState::EAS_EquippingWeapon;
-			UE_LOG(LogTemp, Warning, TEXT("Unequip"));
-			
+			UE_LOG(LogTemp, Warning, TEXT("UNEQUIP CALLED"));
 		}
 		else if (CanArm())
 		{
 			PlayEquipMontage(FName("Equip"));
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 			ActionState = EActionState::EAS_EquippingWeapon;
-			UE_LOG(LogTemp, Warning, TEXT("Equip"));
+			UE_LOG(LogTemp, Warning, TEXT("EQUIP CALLED"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("CAN'T ARM OR DISARM!"));
 		}
 	}
 }
+
 
 void ASlashCharacter::Dodge()
 {
