@@ -24,7 +24,9 @@ public:
 	// void PlayEquipSound();
 
 	FORCEINLINE UBoxComponent* GetWeaponBox() const { return WeaponBox;}
-	 
+	
+	TArray<AActor*> IgnorActors;
+	
 protected:
 	virtual void BeginPlay() override;
 	
