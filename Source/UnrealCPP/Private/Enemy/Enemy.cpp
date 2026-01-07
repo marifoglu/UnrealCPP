@@ -101,7 +101,7 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 	*/
 }
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	// DRAW_SPHERE_Color(ImpactPoint, FColor::Orange);
 
