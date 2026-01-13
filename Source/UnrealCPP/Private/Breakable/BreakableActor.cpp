@@ -3,6 +3,8 @@
 
 #include "Breakable/BreakableActor.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Items/Treasure.h"
 
 ABreakableActor::ABreakableActor()
 {
@@ -12,6 +14,12 @@ ABreakableActor::ABreakableActor()
 	SetRootComponent(GeometryCollection);
 	GeometryCollection->SetGenerateOverlapEvents(true);
 	GeometryCollection->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GeometryCollection->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
+	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	Capsule->SetupAttachment(GetRootComponent());
+	Capsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
 }
 
@@ -29,6 +37,23 @@ void ABreakableActor::Tick(float DeltaTime)
 
 void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
 {
+	if (bBroken) return;
+	bBroken = true;
 	
+	UWorld* World = GetWorld();
+	if (World && TreasureClasses.Num() > 0)
+	{
+		if (FMath::RandRange(0, 100) < SpawningChange)
+		{
+			FVector Location = GetActorLocation();
+			Location.Z += heightOffset;
+
+			const int32 Selection = FMath::RandRange(0, TreasureClasses.Num() - 1); 
+			
+			World->SpawnActor<ATreasure>(TreasureClasses[Selection], Location, GetActorRotation());
+
+			Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECR_Ignore);
+		}
+	}
 }
 

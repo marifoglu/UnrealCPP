@@ -2,6 +2,7 @@
 #include "UnrealCPP/DebugMacros.h"
 #include "Components/SphereComponent.h"
 #include "Characters/SlashCharacter.h"
+#include "NiagaraComponent.h"
 
 AItem::AItem()
 {
@@ -12,6 +13,9 @@ AItem::AItem()
 	
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	Sphere->SetupAttachment(ItemMesh);
+
+	EmbersEffect = CreateDefaultSubobject<class UNiagaraComponent>(TEXT("Embers"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 void AItem::BeginPlay()

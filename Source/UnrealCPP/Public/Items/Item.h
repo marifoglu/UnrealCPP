@@ -51,10 +51,12 @@ protected:
 	UStaticMeshComponent* ItemMesh;
 
 	EItemState ItemState = EItemState::EIS_Hovering;
-
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere;
+	
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* EmbersEffect;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))

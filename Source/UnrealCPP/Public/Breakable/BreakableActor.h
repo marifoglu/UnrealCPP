@@ -23,8 +23,22 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UGeometryCollectionComponent* GeometryCollection;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UCapsuleComponent* Capsule;
+
+private:
+	
+	UPROPERTY(EditAnywhere, Category="Breakable Properties")
+	TArray<TSubclassOf<class ATreasure>> TreasureClasses;
+
+	UPROPERTY(EditAnywhere, Category="Breakable Properties|Offset")
+	float heightOffset = 75.f;
+
+	UPROPERTY(EditAnywhere, Category="Breakable Properties|Spawning Chance")
+	float SpawningChange = 30.f;
+	bool bBroken = false;
+	
 };
